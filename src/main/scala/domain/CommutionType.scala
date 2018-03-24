@@ -1,6 +1,8 @@
 package domain
 
-sealed trait CommutionType {
+import infra.MySqlEnum
+
+sealed trait CommutionType extends MySqlEnum {
   import io.circe._
   import io.circe.generic.semiauto._
 
@@ -8,8 +10,24 @@ sealed trait CommutionType {
   implicit val decode: Decoder[CommutionType] = deriveDecoder[CommutionType]
 }
 
-case object ByMotorcycle extends CommutionType
+object CommutionType {
+  def parse(token: String): CommutionType = {
+    token match {
+      case "M" => ByMotorcycle
+      case "C" => ByCar
+      case "B" => ByBicycle
+    }
+  }
+}
 
-case object ByCar extends CommutionType
+case object ByMotorcycle extends CommutionType {
+  override def stringify = "M"
+}
 
-case object ByBicycle extends CommutionType
+case object ByCar extends CommutionType {
+  override def stringify = "C"
+}
+
+case object ByBicycle extends CommutionType {
+  override def stringify = "B"
+}

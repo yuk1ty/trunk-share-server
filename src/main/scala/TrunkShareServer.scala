@@ -14,7 +14,6 @@ object TrunkShareServer {
 
     val service = apis.toServiceAs[Application.Json]
 
-    // TODO
     val corsPolicy = Cors.Policy(
       allowsOrigin = _ => Some("*"),
       allowsMethods = _ => Some(Seq("GET", "POST", "PATCH", "DELETE")),

@@ -1,9 +1,10 @@
 package infra
 
+import java.util.ResourceBundle
+
 import com.twitter.finagle.Mysql
 
 trait MySqlAdapter {
-
   lazy val client = Mysql.client
     .withCredentials("***", "***")
     .withDatabase("junctiontokyo")
