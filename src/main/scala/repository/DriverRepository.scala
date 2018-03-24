@@ -66,6 +66,16 @@ trait DriverRepository extends UsesMySqlAdapter {
       driver.frequency.stringify
     ).unit
   }
+
+  def update(driver: Driver): Future[Unit] = {
+    // TODO www
+    val ps = mySqlAdapter.client.query(s"""
+        | update driver
+        | set rating = ${driver.rating}
+        | where id = ${driver.id}
+      """.stripMargin)
+    ps.unit
+  }
 }
 
 object DriverRepository extends DriverRepository with MixInMySqlAdapter
