@@ -16,7 +16,7 @@ trait DriversEndpoint
     with UsesDriverRepository
     with LazyLogging {
 
-  def apply() = all() :+: create() :+: update()
+  def apply() = all() :+: create() :+: update() :+: mock()
 
   def mock(): Endpoint[Seq[Driver]] = get("drivers/mock") {
     Output.payload(
