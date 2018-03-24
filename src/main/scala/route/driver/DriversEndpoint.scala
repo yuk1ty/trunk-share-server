@@ -1,8 +1,10 @@
 package route.driver
 
-import com.twitter.finagle.http.Status
-import domain.{ByMotorcycle, Driver, Weekdays}
+import com.twitter.finagle.http.{Status}
+import domain.{Driver}
 import io.finch._
+import io.finch.circe._
+import io.circe.generic.auto._
 import io.finch.syntax._
 import io.finch.{Endpoint, Output}
 import repository.{MixInDriverRepository, UsesDriverRepository}
@@ -17,20 +19,11 @@ trait DriversEndpoint extends UsesDriverUsecase with UsesDriverRepository {
     Output.payload(drivers, Status.Accepted)
   }
 
-  def create(): Endpoint[Seq[Driver]] = get("drivers" :: "new") {
-    Output.payload(
-      Seq(
-        Driver(id = 1,
-               whereFrom = "Saitama",
-               whereTo = "Tokyo",
-               startAt = "08:00",
-               endAt = "09:00",
-               rating = 1,
-               commutionType = ByMotorcycle,
-               frequency = Weekdays)),
-      Status.Accepted
-    )
-  }
+  def create(): Endpoint[Driver] =
+    post("drivers" :: "new" :: jsonBody[Driver]) { driver: Driver =>
+      driverRepository.save(driver)
+      Ok(driver)
+    }
 }
 
 object DriversEndpoint

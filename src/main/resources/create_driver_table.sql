@@ -1,5 +1,6 @@
 create table driver (
   id int,
+  name varchar(255),
   where_from varchar(255),
   where_to varchar(255),
   start_at varchar(5),

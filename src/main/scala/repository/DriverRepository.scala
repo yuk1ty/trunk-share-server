@@ -1,5 +1,6 @@
 package repository
 
+import com.twitter.util.Future
 import domain.{ByMotorcycle, Driver, Weekdays}
 import infra.{MixInMySqlAdapter, UsesMySqlAdapter}
 
@@ -14,6 +15,7 @@ trait DriverRepository extends UsesMySqlAdapter {
     // TODO あとで MySQL につなげる
     Seq[Driver](
       Driver(id = 1,
+             name = "A",
              whereFrom = "Saitama",
              whereTo = "Tokyo",
              startAt = "08:00",
@@ -22,6 +24,7 @@ trait DriverRepository extends UsesMySqlAdapter {
              commutionType = ByMotorcycle,
              frequency = Weekdays),
       Driver(id = 2,
+             name = "B",
              whereFrom = "Saitama",
              whereTo = "Tokyo",
              startAt = "08:00",
@@ -30,6 +33,7 @@ trait DriverRepository extends UsesMySqlAdapter {
              commutionType = ByMotorcycle,
              frequency = Weekdays),
       Driver(id = 3,
+             name = "C",
              whereFrom = "Saitama",
              whereTo = "Tokyo",
              startAt = "08:00",
@@ -39,6 +43,10 @@ trait DriverRepository extends UsesMySqlAdapter {
              frequency = Weekdays)
     )
 //    mySqlAdapter.client.select("select * from driver")
+  }
+
+  def save(driver: Driver): Future[Unit] = {
+    Future(println("保存しました"))
   }
 }
 
