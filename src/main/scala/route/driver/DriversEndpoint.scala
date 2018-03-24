@@ -2,7 +2,7 @@ package route.driver
 
 import com.twitter.finagle.http.Status
 import com.typesafe.scalalogging.LazyLogging
-import domain.{Driver, DriverRating}
+import domain._
 import io.finch._
 import io.finch.circe._
 import io.circe.generic.auto._
@@ -17,6 +17,39 @@ trait DriversEndpoint
     with LazyLogging {
 
   def apply() = all() :+: create() :+: update()
+
+  def mock(): Endpoint[Seq[Driver]] = get("drivers/mock") {
+    Output.payload(
+      Seq[Driver](
+        Driver(1,
+               "Toyoda",
+               "Tokyo",
+               "Chiba",
+               "08:00",
+               "09:00",
+               5,
+               ByCar,
+               Holidays),
+        Driver(2,
+               "Ishizaki",
+               "Tokyo",
+               "Chiba",
+               "08:00",
+               "09:00",
+               5,
+               ByMotorcycle,
+               Holidays),
+        Driver(3,
+               "Narasaki",
+               "Tokyo",
+               "Chiba",
+               "08:00",
+               "09:00",
+               5,
+               ByBicycle,
+               Holidays)
+      ))
+  }
 
   def all(): Endpoint[Seq[Driver]] = get("drivers") {
     driverRepository.getAll() map { drivers =>
