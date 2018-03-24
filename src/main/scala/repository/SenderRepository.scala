@@ -3,10 +3,10 @@ package repository
 import com.twitter.finagle.mysql.{IntValue, Row, StringValue}
 import com.twitter.util.Future
 import domain.{LuggageType, Sender}
-import infra.{EntityMapper, MixInMySqlAdapter, UsesMySqlAdapter}
+import infra._
 import org.apache.commons.lang.BooleanUtils
 
-trait SenderRepository extends UsesMySqlAdapter {
+trait SenderRepository extends UsesMySqlAdapter with UsesMinikuraAdapter {
 
   private lazy val insertQuery =
     """
@@ -50,21 +50,36 @@ trait SenderRepository extends UsesMySqlAdapter {
   }
 
   def save(sender: Sender): Future[Unit] = {
-    val ps = mySqlAdapter.client.prepare(insertQuery)
-    ps(
-      sender.id,
-      sender.name,
-      sender.whereFrom,
-      sender.whereTo,
-      sender.startAt,
-      sender.endAt,
-      sender.luggageType.stringify,
-      if (sender.fragile) 1 else 0
-    ).unit
+    val store2MinikuraTask = minikuraAdapter.send(s"""
+        | "customer_id" : "${sender.id}",
+        | "privacy_status" : "public",
+        | "common01" : "${sender.luggageType.stringify}",
+        | "common02" : "${sender.fragile}",
+        | "common03" : "${sender.whereFrom}",
+        | "common04" : "${sender.whereTo}",
+      """.stripMargin.getBytes)
+
+    val store2RDSTask = mySqlAdapter.client.prepare(insertQuery)
+    store2MinikuraTask map { response =>
+      println(response.asString)
+      store2RDSTask(
+        sender.id,
+        sender.name,
+        sender.whereFrom,
+        sender.whereTo,
+        sender.startAt,
+        sender.endAt,
+        sender.luggageType.stringify,
+        if (sender.fragile) 1 else 0
+      ).unit
+    }
   }
 }
 
-object SenderRepository extends SenderRepository with MixInMySqlAdapter
+object SenderRepository
+    extends SenderRepository
+    with MixInMySqlAdapter
+    with MixInMinikuraAdapter
 
 trait UsesSenderRepository {
   val senderRepository: SenderRepository
