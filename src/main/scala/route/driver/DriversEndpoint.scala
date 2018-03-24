@@ -5,9 +5,10 @@ import domain.{ByMotorcycle, Driver, Weekdays}
 import io.finch._
 import io.finch.syntax._
 import io.finch.{Endpoint, Output}
+import repository.{MixInDriverRepository, UsesDriverRepository}
 import usecase.{MixInDriverUsecase, UsesDriverUsecase}
 
-trait DriversEndpoint extends UsesDriverUsecase {
+trait DriversEndpoint extends UsesDriverUsecase with UsesDriverRepository {
 
   def apply() = all() :+: create()
 
@@ -42,4 +43,7 @@ trait DriversEndpoint extends UsesDriverUsecase {
   }
 }
 
-object DriversEndpoint extends DriversEndpoint with MixInDriverUsecase
+object DriversEndpoint
+    extends DriversEndpoint
+    with MixInDriverUsecase
+    with MixInDriverRepository
