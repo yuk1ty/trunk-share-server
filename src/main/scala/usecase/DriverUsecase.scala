@@ -1,6 +1,12 @@
 package usecase
 
-trait DriverUsecase {}
+import domain.{Driver, DriverRating}
+
+trait DriverUsecase {
+  def updateDriverRating(rating: DriverRating, driver: Driver): Driver = {
+    driver.copy(rating = rating.safety.toInt)
+  }
+}
 
 object DriverUsecase extends DriverUsecase
 

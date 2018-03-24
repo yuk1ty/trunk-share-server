@@ -46,6 +46,12 @@ trait DriverRepository extends UsesMySqlAdapter {
     mySqlAdapter.client.select("select * from driver")(DriverMapper)
   }
 
+  def findOne(id: Long): Future[Option[Driver]] = {
+    mySqlAdapter.client
+      .select(s"select * from driver where id = $id")(DriverMapper)
+      .map(_.headOption)
+  }
+
   def save(driver: Driver): Future[Unit] = {
     val ps = mySqlAdapter.client.prepare(insertQuery)
     ps(

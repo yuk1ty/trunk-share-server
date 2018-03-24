@@ -1,7 +1,7 @@
 package route.driver
 
-import com.twitter.finagle.http.{Status}
-import domain.{Driver}
+import com.twitter.finagle.http.Status
+import domain.{Driver, DriverRating}
 import io.finch._
 import io.finch.circe._
 import io.circe.generic.auto._
@@ -16,19 +16,29 @@ trait DriversEndpoint extends UsesDriverUsecase with UsesDriverRepository {
 
   def all(): Endpoint[Seq[Driver]] = get("drivers") {
     driverRepository.getAll() map { drivers =>
-      Output.payload(drivers, Status.Accepted)
+      Output
+        .payload(drivers, Status.Accepted)
+        .withHeader(("Access-Control-Allow-Origin", "*"))
     }
   }
 
   def create(): Endpoint[Driver] =
     post("drivers" :: "new" :: jsonBody[Driver]) { driver: Driver =>
       driverRepository.save(driver)
-      Ok(driver)
+      Ok(driver).withHeader(("Access-Control-Allow-Origin", "*"))
     }
 
-//  def update(): Endpoint[Driver] = patch("drivers" :: "update" :: jsonBody[Driver]) { driver: Driver =>
-//
-//  }
+  def update(): Endpoint[Driver] =
+    patch("drivers" :: "rating" :: "update" :: jsonBody[DriverRating]) {
+      rating: DriverRating =>
+        driverRepository.findOne(rating.driverId) map {
+          case Some(driver) =>
+            Ok(driverUsecase.updateDriverRating(rating, driver))
+              .withHeader(("Access-Control-Allow-Origin", "*"))
+          case None =>
+            NoContent.withHeader(("Access-Control-Allow-Origin", "*"))
+        }
+    }
 }
 
 object DriversEndpoint

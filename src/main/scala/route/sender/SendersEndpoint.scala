@@ -15,7 +15,9 @@ trait SendersEndpoint extends UsesSenderRepository {
 
   def all(): Endpoint[Seq[Sender]] = get("senders") {
     senderRepository.getAll() map { senders =>
-      Output.payload(senders, Status.Accepted)
+      Output
+        .payload(senders, Status.Accepted)
+        .withHeader(("Access-Control-Allow-Origin", "*"))
     }
   }
 
@@ -23,7 +25,9 @@ trait SendersEndpoint extends UsesSenderRepository {
     post("senders" :: "new" :: jsonBody[Sender]) { (sender: Sender) =>
       {
         senderRepository.save(sender)
-        Output.payload(sender, Status.Accepted)
+        Output
+          .payload(sender, Status.Accepted)
+          .withHeader(("Access-Control-Allow-Origin", "*"))
       }
     }
 }
