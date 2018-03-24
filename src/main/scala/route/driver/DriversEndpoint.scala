@@ -13,18 +13,8 @@ trait DriversEndpoint extends UsesDriverUsecase with UsesDriverRepository {
   def apply() = all() :+: create()
 
   def all(): Endpoint[Seq[Driver]] = get("drivers") {
-    Output.payload(
-      Seq(
-        Driver(id = 1,
-               whereFrom = "Saitama",
-               whereTo = "Tokyo",
-               startAt = "08:00",
-               endAt = "09:00",
-               rating = 1,
-               commutionType = ByMotorcycle,
-               frequency = Weekdays)),
-      Status.Accepted
-    )
+    val drivers = driverRepository.getAll()
+    Output.payload(drivers, Status.Accepted)
   }
 
   def create(): Endpoint[Seq[Driver]] = get("drivers" :: "new") {

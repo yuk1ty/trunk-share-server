@@ -13,19 +13,6 @@ case class Driver(id: Long,
                   frequency: Frequency)
     extends TrunkShareResponse
 
-sealed trait CommutionType extends MySqlEnum
-
-case object ByCar extends CommutionType {
-  override def stringify: String = "C"
-}
-
-case object ByMotorcycle extends CommutionType {
-  override def stringify: String = "M"
-}
-
-case object ByBicycle extends CommutionType {
-  override def stringify: String = "B"
-}
 
 sealed trait Frequency extends MySqlEnum
 
