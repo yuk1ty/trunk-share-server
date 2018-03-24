@@ -6,11 +6,12 @@ import io.finch.circe._
 import io.circe.generic.auto._
 import route.driver.DriversEndpoint
 import route.hc.HealthCheckEndpoint
+import route.sender.SendersEndpoint
 
 object TrunkShareServer {
 
   def main(args: Array[String]): Unit = {
-    val apis = HealthCheckEndpoint() :+: DriversEndpoint()
+    val apis = HealthCheckEndpoint() :+: DriversEndpoint() :+: SendersEndpoint()
 
     val service = apis.toServiceAs[Application.Json]
 

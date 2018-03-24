@@ -25,6 +25,10 @@ trait DriversEndpoint extends UsesDriverUsecase with UsesDriverRepository {
       driverRepository.save(driver)
       Ok(driver)
     }
+
+//  def update(): Endpoint[Driver] = patch("drivers" :: "update" :: jsonBody[Driver]) { driver: Driver =>
+//
+//  }
 }
 
 object DriversEndpoint
