@@ -62,6 +62,7 @@ trait DriversEndpoint
   def create(): Endpoint[Driver] =
     post("drivers" :: "new" :: jsonBody[Driver]) { driver: Driver =>
       driverRepository.save(driver)
+      java.awt.Toolkit.getDefaultToolkit().beep()
       println(s"保存に成功しました: $driver")
       Output
         .payload(driver, Status.Accepted)
@@ -85,6 +86,7 @@ trait DriversEndpoint
           case Some(driver) =>
             val update = driverUsecase.updateDriverRating(rating, driver)
             driverRepository.update(update)
+            java.awt.Toolkit.getDefaultToolkit().beep()
             println(s"評価変更以前のドライバー: ${driver}, 評価更新後のドライバー: ${update}")
             Ok(update)
               .withHeader(("Access-Control-Allow-Origin", "*"))

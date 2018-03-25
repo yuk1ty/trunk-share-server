@@ -4,13 +4,13 @@ import domain.{Driver, DriverRating}
 
 trait DriverUsecase {
   def updateDriverRating(rating: DriverRating, driver: Driver): Driver = {
-    val driverRate = if (rating.safety < 30) {
+    val driverRate = if (rating.safety < 10) {
       5
-    } else if (rating.safety >= 30 && rating.safety < 70) {
+    } else if (rating.safety >= 10 && rating.safety < 25) {
       4
-    } else if (rating.safety >= 70 && rating.safety < 110) {
+    } else if (rating.safety >= 25 && rating.safety < 40) {
       3
-    } else if (rating.safety >= 150 && rating.safety < 190) {
+    } else if (rating.safety >= 40 && rating.safety < 50) {
       2
     } else {
       1
