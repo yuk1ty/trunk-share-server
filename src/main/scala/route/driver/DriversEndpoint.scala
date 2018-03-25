@@ -18,7 +18,7 @@ trait DriversEndpoint
 
   def apply() = all() :+: create() :+: update() :+: mock()
 
-  def mock(): Endpoint[Seq[Driver]] = get("drivers/mock") {
+  def mock(): Endpoint[Seq[Driver]] = get("drivers" :: "mock") {
     Output.payload(
       Seq[Driver](
         Driver(1,
@@ -63,7 +63,10 @@ trait DriversEndpoint
     post("drivers" :: "new" :: jsonBody[Driver]) { driver: Driver =>
       driverRepository.save(driver)
       println(s"保存に成功しました: $driver")
-      Ok(driver).withHeader(("Access-Control-Allow-Origin", "*"))
+      Ok(driver)
+        .withHeader(("Access-Control-Allow-Origin", "*"))
+        .withHeader(("Access-Control-Allow-Methods", "GET,POST,HEAD,OPTIONS"))
+        .withHeader(("Access-Control-Allow-Credentials", "true"))
     }
 
   def update(): Endpoint[Driver] =
@@ -76,9 +79,15 @@ trait DriversEndpoint
             println(s"評価変更以前のドライバー: ${driver}, 評価更新後のドライバー: ${update}")
             Ok(update)
               .withHeader(("Access-Control-Allow-Origin", "*"))
+              .withHeader(
+                ("Access-Control-Allow-Methods", "GET,POST,HEAD,OPTIONS"))
           case None => {
             println("ID に該当するドライバーがいませんでした．")
-            NoContent.withHeader(("Access-Control-Allow-Origin", "*"))
+            NoContent
+              .withHeader(("Access-Control-Allow-Origin", "*"))
+              .withHeader(
+                ("Access-Control-Allow-Methods", "GET,POST,HEAD,OPTIONS"))
+              .withHeader(("Access-Control-Allow-Credentials", "true"))
           }
         }
     }

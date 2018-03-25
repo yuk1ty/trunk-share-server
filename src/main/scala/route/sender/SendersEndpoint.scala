@@ -29,6 +29,9 @@ trait SendersEndpoint extends UsesSenderRepository {
         Output
           .payload(sender, Status.Accepted)
           .withHeader(("Access-Control-Allow-Origin", "*"))
+          .withHeader(("Access-Control-Allow-Methods", "GET,POST,HEAD,OPTIONS"))
+          .withHeader(("Access-Control-Allow-Credentials", "true"))
+
       }
     }
 }
