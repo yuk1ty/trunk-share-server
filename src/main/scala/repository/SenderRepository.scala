@@ -2,9 +2,11 @@ package repository
 
 import com.twitter.finagle.mysql.{IntValue, Row, StringValue}
 import com.twitter.util.Future
+import context.OemKey
 import domain.{LuggageType, Sender}
 import infra._
 import org.apache.commons.lang.BooleanUtils
+import skinny.http.Request
 
 trait SenderRepository extends UsesMySqlAdapter with UsesMinikuraAdapter {
 
@@ -50,14 +52,16 @@ trait SenderRepository extends UsesMySqlAdapter with UsesMinikuraAdapter {
   }
 
   def save(sender: Sender): Future[Unit] = {
-    val store2MinikuraTask = minikuraAdapter.send(s"""
-        | "customer_id" : "${sender.id}",
-        | "privacy_status" : "public",
-        | "common01" : "${sender.luggageType.stringify}",
-        | "common02" : "${sender.fragile}",
-        | "common03" : "${sender.whereFrom}",
-        | "common04" : "${sender.whereTo}",
-      """.stripMargin.getBytes)
+    val minikuraRequet =
+      Request("https://junction-tokyo.minikura.com/v1/minikura/storing")
+        .queryParam(("oem_key", OemKey.key))
+        .queryParam(("customer_id", sender.id))
+        .queryParam(("privacy_status", "public"))
+        .queryParam(("common01", sender.whereFrom))
+        .queryParam(("common02", sender.whereTo))
+        .queryParam(("common03", sender.luggageType))
+        .queryParam(("common04", sender.fragile))
+    val store2MinikuraTask = minikuraAdapter.send(minikuraRequet)
 
     val store2RDSTask = mySqlAdapter.client.prepare(insertQuery)
     store2MinikuraTask map { response =>

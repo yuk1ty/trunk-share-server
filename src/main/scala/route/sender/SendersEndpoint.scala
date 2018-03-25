@@ -25,6 +25,7 @@ trait SendersEndpoint extends UsesSenderRepository {
     post("senders" :: "new" :: jsonBody[Sender]) { (sender: Sender) =>
       {
         senderRepository.save(sender)
+        println(s"保存に成功しました: $sender")
         Output
           .payload(sender, Status.Accepted)
           .withHeader(("Access-Control-Allow-Origin", "*"))
